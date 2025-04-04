@@ -39,23 +39,37 @@ function App() {
     setResult(null);
     
     try {
+      console.log("Submitting form data:", formData);
+      
       // Update progress states for visual feedback
       setProgress({ research: true, writing: false, editing: false, seo: false });
       
       // In a production environment, this would call the actual API
       // For demo purposes, we'll use the mock function
       // Uncomment the following lines to use the actual API
-      /*
-      const response = await generateContent({
-        contentType: formData.contentType,
-        topic: formData.topic,
-        targetAudience: formData.targetAudience,
-        tone: formData.tone
-      });
-      setResult(response.content);
-      */
+      
+      try {
+        const response = await generateContent({
+          contentType: formData.contentType,
+          topic: formData.topic,
+          targetAudience: formData.targetAudience,
+          tone: formData.tone
+        });
+        
+        // Update progress based on response
+        setProgress({ research: true, writing: true, editing: true, seo: true });
+        
+        setResult(response.content);
+        setStep(2);
+      } catch (err) {
+        console.error("API Error:", err);
+        setError(`Error connecting to the API: ${err.message || 'Unknown error'}`);
+      }
+      
       
       // Mock implementation with timeouts to simulate the process
+      // Comment out these lines when using the actual API
+      /*
       await new Promise(resolve => setTimeout(resolve, 2000));
       setProgress({ research: true, writing: true, editing: false, seo: false });
       
@@ -70,6 +84,7 @@ function App() {
       // Generate mock result based on input
       const mockResult = generateMockResult(formData);
       setResult(mockResult);
+      */
       setStep(2);
     } catch (err) {
       setError('An error occurred while generating content. Please try again.');
